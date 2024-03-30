@@ -41,13 +41,12 @@ namespace CachedProxyProofOfConcept
                 {
                     services
                         .AddSingleton<ProofOfConcept>()
-                        .AddSingleton<Client>()
+                        .AddTransient<Client>()
                         .AddSingleton<Api>()
                         .AddSingleton<ServiceBus>()
                         .AddSingleton<CachedProxy>()
                         .AddSingleton<CacheStore>()
                         .AddSingleton<CalculationEngine>()
-                        .AddSingleton<SignalR>()
                         .AddSingleton<Logger>()
                         ;
                 });

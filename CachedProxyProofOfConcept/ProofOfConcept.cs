@@ -1,21 +1,15 @@
 namespace CachedProxyProofOfConcept;
 
-public class ProofOfConcept
+public class ProofOfConcept(Client client1, Client client2)
 {
-    private readonly Client _client1;
-    private readonly Client _client2;
-
-    public ProofOfConcept(Client client1, Client client2)
-    {
-        _client1 = client1;
-        _client2 = client2;
-    }
-    
     public async Task Run()
     {
-        _client1.RequestCalculation("HASH1");
+        _ = Task.Run(() => client1.RequestCalculation("Client1", "HASH1"));
         await Task.Delay(500);
-        _client2.RequestCalculation("HASH1");
+        _ = Task.Run(() => client2.RequestCalculation("Client2", "HASH1"));
+        // await client1.RequestCalculation("Client 1", "HASH1");
+        // await Task.Delay(500);
+        // await client2.RequestCalculation("Client 2", "HASH1");
         await Task.Delay(5000);
     }
 }

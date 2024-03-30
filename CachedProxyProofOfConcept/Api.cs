@@ -1,27 +1,10 @@
 namespace CachedProxyProofOfConcept;
 
-public class Api
+public class Api(CachedProxy cachedProxy)
 {
-    private readonly ServiceBus _serviceBus;
-    private readonly SignalR _signalR;
-
-    public Api(ServiceBus serviceBus, SignalR signalR)
+    public async Task<CalculationResult> RequestCalculation(string key)
     {
-        _serviceBus = serviceBus;
-        _signalR = signalR;
-        
-        _serviceBus.SubscribeTo<CalculationResultMessage>(HandleCalculationResultMessage);
-    }
-    
-    public void RequestCalculation(string key)
-    {
-        _serviceBus.Publish(new RequestCalculationMessage(key));
-    }
-
-    private void HandleCalculationResultMessage(object message)
-    {
-        if (message is not CalculationResultMessage calculationResultMessage) return;
-
-        _signalR.Send(new SignalRMessage(calculationResultMessage.CalculationResult));
+        var result = await cachedProxy.GetCalculationFor(key);
+        return result;
     }
 }

@@ -2,26 +2,13 @@ using Newtonsoft.Json;
 
 namespace CachedProxyProofOfConcept;
 
-public class Client
+public class Client(Api api, Logger logger)
 {
-    private readonly Api _api;
-    private readonly Logger _logger;
-
-    public Client(Api api, SignalR signalR, Logger logger)
+    public async Task RequestCalculation(string requestId, string key)
     {
-        _api = api;
-        _logger = logger;
-
-        signalR.Receive(message =>
-        {
-            _logger.Log("SignalR Message Received ...");
-            _logger.Log(JsonConvert.SerializeObject(message, Formatting.Indented));
-        });
-    }
-    
-    public void RequestCalculation(string key)
-    {
-        _logger.Log($"Request calculation for {key}");
-        _api.RequestCalculation(key);
+        logger.Log($"Client > RequestCalculation > {requestId} , {key})");
+        var result = await api.RequestCalculation(key);
+        var json = JsonConvert.SerializeObject(result, Formatting.Indented);
+        logger.Log($"Client > RequestCalculation > Response > {requestId} , {key}\n{json}");
     }
 }

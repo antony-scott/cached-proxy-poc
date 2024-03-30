@@ -1,17 +1,18 @@
 namespace CachedProxyProofOfConcept;
 
-public class CalculationEngine
+public class CalculationEngine(ServiceBus serviceBus, Logger logger)
 {
-    private readonly Logger _logger;
-
-    public CalculationEngine(Logger logger)
+    public CalculationResult PerformCalculation(string key)
     {
-        _logger = logger;
-    }
+        serviceBus.Publish(new CalculationStartedMessage(key));
+        
+        logger.Log($"PerformCalculation > Starting {key}");
+        Thread.Sleep(Random.Shared.Next(2000, 3000));
+        logger.Log($"PerformCalculation > Completed {key}");
 
-    public CalculationResult PerformCalculation(RequestCalculationMessage requestCalculationMessage)
-    {
-        _logger.Log($"Performing calculation for {requestCalculationMessage.Key}");
-        return new CalculationResult(requestCalculationMessage.Key, $"Result for {requestCalculationMessage.Key}");
+        var result = new CalculationResult(key, $"Result for {key}");
+
+        serviceBus.Publish(new CalculationCompletedMessage(key));
+        return result;
     }
 }
